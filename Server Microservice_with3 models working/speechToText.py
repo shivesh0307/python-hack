@@ -9,13 +9,14 @@ region="eastus"
 
 from pydub import AudioSegment
 
-import subprocess 
-  
-
 def convert_mp3_to_wav(mp3_file, wav_file):
-    # convert mp3 to wav file 
-    subprocess.call(['ffmpeg', '-i', mp3_file, 
-                 wav_file])
+    # Load the MP3 file
+    audio = AudioSegment.from_mp3(mp3_file)
+    
+    # Export the audio as WAV
+    audio.export(wav_file, format="wav")
+    audio = None
+    del audio
 
 
 def recognize_from_file(audio_file):
@@ -51,7 +52,6 @@ def recognize_from_file(audio_file):
                 print("Did you set the speech resource key and region values?")
         print("Language", detected_language)
         speech_recognizer=None
-        del speech_recognizer
         # if os.path.exists(audio_file_wav):
         #     os.remove(audio_file_wav)
     except Exception as e: 

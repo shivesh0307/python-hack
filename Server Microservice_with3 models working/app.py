@@ -83,7 +83,7 @@ def voice_analyze():
         print("Error deleting mp3 file")
       filename = audio_file.filename
       detectedVoice= "False" if (text is None or text == "") else "True"
-      detectedVoice = detectedVoice + "  " + text
+      detectedVoice = text
       print("detectedVoice",detectedVoice)
       return {
               "status":"success",
