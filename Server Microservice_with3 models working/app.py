@@ -27,7 +27,7 @@ def voice_analyze():
   if request.method == "GET":
     return render_template("voice_form.html")
   elif request.method == "POST":
-    audio_file = request.files.get("audio_file")
+    audio_file = request.files.get("sample")
     print(audio_file)
     if audio_file: 
       

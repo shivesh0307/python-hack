@@ -35,7 +35,7 @@
         <p>Upload a voice file (mp3, mp4) for analysis.</p>
         <form id="voice-form" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
-            <input class="form-control" type="file" id="audio_file" accept="audio/*">
+            <input class="form-control" type="file" id="sample" accept="audio/*">
           </div>
           <button type="submit" class="btn btn-primary">Analyze</button>
         </form>
@@ -112,7 +112,7 @@
 
     const voiceForm = document.getElementById('voice-form');
     const file_Name = document.getElementById('FileName');
-    const voiceFile = document.getElementById('audio_file');
+    const voiceFile = document.getElementById('sample');
     const deepfakeStatus = document.getElementById('deepfake-status');
     const emotion = document.getElementById('emotion');
     const backgroundSound = document.getElementById('background-sound');
@@ -132,7 +132,7 @@
       clearValues();
       const formData = new FormData();
 
-      formData.append('audio_file', voiceFile.files[0]);
+      formData.append('sample', voiceFile.files[0]);
 
       fetch('/voice/analyze', {
         method: 'POST',
