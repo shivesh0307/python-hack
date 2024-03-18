@@ -1,0 +1,193 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Voice Analysis</title>
+</head>
+<body>
+  <h1>Upload Audio File for Analysis</h1>
+  <form method="POST" enctype="multipart/form-data">
+    <label for="audio_file">Select audio file:</label>
+    <input type="file" id="audio_file" name="audio_file" accept="audio/*">
+    <br>
+    <button type="submit">Analyze</button>
+  </form>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Analysis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h1> <b>Voice Analysis</b></h1>
+        <p>Upload a voice file (mp3, mp4) for analysis.</p>
+        <form id="voice-form" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <input class="form-control" type="file" id="audio_file" accept="audio/*">
+          </div>
+          <button type="submit" class="btn btn-primary">Analyze</button>
+        </form>
+      </div>
+    </div>
+    <div class="row mt-5 justify-content-center">
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">File name</th>
+              <th scope="col">Deepfake Status</th>
+              <th scope="col">Ai Probability</th>
+              <th scope="col">Human Probability</th>
+              <th scope="col">Response time</th>
+            </tr>
+
+
+          </thead>
+          <tbody>
+            <tr>
+              <td id="FileName">None</td>
+              <td id="deepfake-status">None</td>
+              <td id="aiProbability">None</td>
+              <td id="humanProbility">None</td>
+              <td id="responseTime">None</td>
+            </tr>
+
+
+
+            <!-- <td>
+                                <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                  <div class="progress-bar" style="width: 0%"></div>
+                                </div> -->
+            </td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th scope="col">Detected Voice</th>
+              <th scope="col">Background Sound</th>
+              <th scope="col">Emotion</th>
+              <th scope="col">Language</th>
+              <th scope="col">Background Liviliness Probability</th>
+            </tr>
+          </thead>
+
+          <body>
+            <tr>
+              <td id="detectedVoice">None</td>
+              <td id="background-sound">None</td>
+              <td id="emotion">None</td>
+              <td id="language">None</td>
+              <td id="livliness">None</td>
+            </tr>
+          </body>
+        </table>
+      </div>
+    </div>
+    <div class="row mt-5 justify-content-center">
+      <div class="col-md-6">
+        <button type="button" id="clear" class="btn btn-warning">Clear values</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script>
+    // <th scope="col">Ai Probability</th>
+    //                         <th scope="col">Human Probability</th> 
+    //                         <th scope="col">Response time</th> 
+
+    const voiceForm = document.getElementById('voice-form');
+    const file_Name = document.getElementById('FileName');
+    const voiceFile = document.getElementById('audio_file');
+    const deepfakeStatus = document.getElementById('deepfake-status');
+    const emotion = document.getElementById('emotion');
+    const backgroundSound = document.getElementById('background-sound');
+    const clear_vals = document.getElementById('clear');
+    const detectedVoice = document.getElementById('detectedVoice');
+    const language = document.getElementById('language');
+    const livliness = document.getElementById('livliness');
+    const responseTime = document.getElementById('responseTime');
+    const aiProbability = document.getElementById('aiProbability')
+    const humanProbility = document.getElementById('humanProbility')
+    clear_vals.addEventListener('click', () => {
+      clearValues();
+    });
+
+    voiceForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      clearValues();
+      const formData = new FormData();
+
+      formData.append('audio_file', voiceFile.files[0]);
+
+      fetch('/voice/analyze', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.status)
+          if (data.status == "success") {
+            console.log("data", data)
+            file_Name.textContent = data.fileName;
+
+
+            deepfakeStatus.textContent = data.analysis.voiceType === "ai" ? 'Fake' : 'Real';
+            deepfakeStatus.style.color = data.analysis.voiceType === "ai" ? 'red' : 'green';
+            emotion.textContent = data.analysis.additionalInfo.emotionalTone;
+            console.log("emotion", emotion.textContent)
+            // backgroundSound.style.width = `${data.analysis.additionalInfo.backgroundNoiseLevel}%`;
+            backgroundSound.textContent = data.analysis.additionalInfo.backgroundNoiseLevel;
+            detectedVoice.textContent = data.analysis.detectedVoice;
+            language.textContent = data.analysis.additionalInfo.language;
+            livliness.textContent = data.analysis.additionalInfo.liveliness
+            responseTime.textContent = data.responseTime
+            aiProbability.textContent = data.analysis.confidenceScore.aiProbability
+            console.log(aiProbability)
+            humanProbility.textContent = data.analysis.confidenceScore.humanProbability
+          }
+          else {
+            console.log('Error: Please try again', data.status); // Display error message
+          }
+          voiceFile.value = ''; // Clear the file input after successful analysis
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error: An unexpected error occurred.'); // Generic error message
+        });
+    });
+
+    function clearValues() {
+      file_Name.textContent = 'Waiting....';
+      deepfakeStatus.textContent = 'Waiting....';
+      deepfakeStatus.style.color = '';
+      emotion.textContent = 'Waiting....';
+      aiProbability.textContent = 'Waiting....';
+      humanProbility.textContent = 'Waiting....';
+      responseTime.textContent = 'Waiting....'
+      livliness.textContent = 'Waiting....';
+      language.textContent = 'Waiting....';
+      detectedVoice.textContent = 'Waiting...'
+
+      backgroundSound.textContent = 'Waiting....';
+    }
+
+
+  </script>
+</body>
+
+</html>

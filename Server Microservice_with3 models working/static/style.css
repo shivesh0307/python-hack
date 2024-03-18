@@ -1,0 +1,25 @@
+body {
+    font-family: sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  /* .progress-bar {
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 3px;
+    transition: width 0.2s ease-in-out;
+  }
+  
+  .progress-bar.bg-success {
+    background-color: #28a745;
+  }
+  
+  .progress-bar.bg-danger { 
+    background-color: #dc3545;
+  } 
+  */
